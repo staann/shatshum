@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot com Cadeia de Markov</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 20px auto; }
+        h2, h3 { color: #333; }
+        textarea { width: 100%; height: 150px; margin-bottom: 10px; }
+        input[type="text"] { width: 70%; padding: 8px; }
+        button { padding: 8px 15px; cursor: pointer; }
+        #chat-response { margin-top: 20px; padding: 10px; background-color: #f0f0f0; border-radius: 5px; min-height: 50px;}
+    </style>
+</head>
+<body>
+    <h2>Chatbot Simples com Cadeia de Markov</h2>
+
+    <h3>1. Texto de Treinamento (Corpus)</h3>
+    <textarea id="corpus-text">
+O sol brilha no céu azul. O pássaro canta na árvore. A árvore tem folhas verdes. O céu é grande e azul. O pássaro voa alto no céu. As folhas caem no outono. O sol aquece a terra.
+    </textarea>
+
+    <h3>2. Converse com o Bot</h3>
+    <input type="text" id="user-input" placeholder="Digite sua mensagem...">
+    <button id="send-btn">Enviar</button>
+
+    <h3>Resposta do Bot:</h3>
+    <div id="chat-response"></div>
+
+    <script src="chatbot.js"></script>
+</body>
+</html>

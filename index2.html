@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shatshum - O Chat Shumbrega | UnB</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .chat-container {
+            width: 90%;
+            max-width: 800px;
+            height: 600px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+        }
+
+        @keyframes slideInUp {
+            0% {
+                transform: translateY(100px) scale(0.9);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #00a86b 0%, #00c851 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chat-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .chat-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+            animation: titlePulse 2s ease-in-out infinite alternate;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes titlePulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.02); }
+        }
+
+        .chat-header p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 1;
+            animation: fadeInSlide 1s ease-out 0.5s both;
+        }
+
+        @keyframes fadeInSlide {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 0.9;
+                transform: translateY(0);
+            }
+        }
+
+        .unb-logo {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #00a86b;
+            font-size: 0.8rem;
+            z-index: 2;
+            animation: logoSpin 4s linear infinite, logoBounce 2s ease-in-out infinite alternate;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes logoSpin {
+            0% { transform: translateY(-50%) rotate(0deg); }
+            100% { transform: translateY(-50%) rotate(360deg); }
+        }
+
+        @keyframes logoBounce {
+            0% { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+            100% { box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); }
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            animation: messageSlideIn 0.5s ease-out;
+        }
+
+        @keyframes messageSlideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .message-bubble:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.bot .message-bubble {
+            background: white;
+            color: #333;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .message.bot .message-bubble::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 168, 107, 0.1), transparent);
+            animation: messageShimmer 2s infinite;
+        }
+
+        @keyframes messageShimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, #00a86b 0%, #00c851 100%);
+            color: white;
+            animation: userMessageGlow 0.5s ease-out;
+        }
+
+        @keyframes userMessageGlow {
+            0% {
+                box-shadow: 0 0 0 rgba(0, 168, 107, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(0, 168, 107, 0.5);
+            }
+            100% {
+                box-shadow: 0 0 0 rgba(0, 168, 107, 0.5);
+            }
+        }
+
+        .bot-avatar {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #00a86b 0%, #00c851 100%);
+            border-radius: 50%;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+            animation: avatarPulse 2s ease-in-out infinite, avatarFloat 3s ease-in-out infinite;
+            box-shadow: 0 4px 15px rgba(0, 168, 107, 0.3);
+            position: relative;
+        }
+
+        @keyframes avatarPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes avatarFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .bot-avatar::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background: #00c851;
+            border-radius: 50%;
+            animation: statusBlink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes statusBlink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+
+        .welcome-message h3 {
+            color: #00a86b;
+            margin-bottom: 10px;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .quick-action {
+            background: white;
+            border: 2px solid #00a86b;
+            color: #00a86b;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+            animation: quickActionFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes quickActionFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-2px); }
+        }
+
+        .quick-action::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 168, 107, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .quick-action:hover::before {
+            left: 100%;
+        }
+
+        .quick-action:hover {
+            background: linear-gradient(135deg, #00a86b 0%, #00c851 100%);
+            color: white;
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 168, 107, 0.3);
+            border-color: #00c851;
+        }
+
+        .quick-action:active {
+            transform: translateY(-2px) scale(1.02);
+            transition: all 0.1s ease;
+        }
+
+        .chat-input {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            background: white;
+        }
+
+        .input-field:focus {
+            border-color: #00a86b;
+            box-shadow: 0 0 0 3px rgba(0, 168, 107, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .input-field:hover {
+            border-color: #00c851;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #00a86b 0%, #00c851 100%);
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-size: 1.2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 168, 107, 0.3);
+        }
+
+        .send-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .send-button:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+
+        .send-button:hover {
+            background: linear-gradient(135deg, #00954f 0%, #00a86b 100%);
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 8px 25px rgba(0, 168, 107, 0.4);
+        }
+
+        .send-button:active {
+            transform: scale(1.05) rotate(10deg);
+            transition: all 0.1s ease;
+        }
+
+        .send-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .send-button:disabled::before {
+            display: none;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+            margin-left: 42px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #00a86b;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .particle:nth-child(1) {
+            width: 20px;
+            height: 20px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+            animation-duration: 8s;
+        }
+
+        .particle:nth-child(2) {
+            width: 15px;
+            height: 15px;
+            top: 60%;
+            left: 80%;
+            animation-delay: 2s;
+            animation-duration: 6s;
+        }
+
+        .particle:nth-child(3) {
+            width: 25px;
+            height: 25px;
+            top: 40%;
+            left: 70%;
+            animation-delay: 4s;
+            animation-duration: 10s;
+        }
+
+        .particle:nth-child(4) {
+            width: 12px;
+            height: 12px;
+            top: 80%;
+            left: 20%;
+            animation-delay: 1s;
+            animation-duration: 7s;
+        }
+
+        .particle:nth-child(5) {
+            width: 18px;
+            height: 18px;
+            top: 30%;
+            left: 90%;
+            animation-delay: 3s;
+            animation-duration: 9s;
+        }
+
+        .particle:nth-child(6) {
+            width: 22px;
+            height: 22px;
+            top: 70%;
+            left: 5%;
+            animation-delay: 5s;
+            animation-duration: 8s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0.3;
+            }
+            25% {
+                transform: translateY(-20px) rotate(90deg);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translateY(-40px) rotate(180deg);
+                opacity: 0.8;
+            }
+            75% {
+                transform: translateY(-20px) rotate(270deg);
+                opacity: 0.6;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                width: 95%;
+                height: 90vh;
+                margin: 20px 0;
+            }
+
+            .chat-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .unb-logo {
+                width: 35px;
+                height: 35px;
+                font-size: 0.7rem;
+            }
+
+            .message-bubble {
+                max-width: 85%;
+            }
+
+            .quick-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .quick-action {
+                width: 200px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Partículas flutuantes -->
+    <div class="floating-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>Shatshum</h1>
+            <p>O Chat Shumbrega da UnB</p>
+            <div class="unb-logo">UnB</div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="welcome-message">
+                <h3>🎓 Bem-vindo ao Shatshum!</h3>
+                <p>Olá! Sou o ShatShum - O Shat Shumbrega.<br>
+                Oque conversaremos hoje?</p>
+            
+            </div>
+
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="bot-avatar">S</div>
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+        </div>
+
+        <form class="chat-input" onsubmit="sendMessage(event)">
+            <input 
+                type="text" 
+                class="input-field" 
+                id="messageInput" 
+                placeholder="Digite sua mensagem..."
+                autocomplete="off"
+            >
+            <button type="submit" class="send-button" id="sendButton">
+                ➤
+            </button>
+        </form>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        // Respostas do bot
+        const botResponses = {
+            'cursos': 'A UnB oferece mais de 100 cursos de graduação e diversos programas de pós-graduação. Você pode consultar todos os cursos disponíveis no site oficial da universidade. Há algum curso específico que te interessa?',
+            'matrícula': 'Para se matricular na UnB, você precisa participar do processo seletivo através do ENEM/SISU ou vestibular. As inscrições geralmente abrem no início do ano. Quer saber sobre algum processo específico?',
+            'calendário': 'O calendário acadêmico da UnB está disponível no site oficial. O semestre letivo geralmente inicia em março e agosto. Posso ajudar com informações sobre datas específicas?',
+            'contato': 'Você pode entrar em contato com a UnB através do telefone (61) 3107-0100 ou pelo site oficial unb.br. Cada faculdade também tem seus próprios canais de atendimento.',
+            'default': 'Obrigado pela sua pergunta! Como assistente da UnB, posso ajudar com informações sobre cursos, matrícula, calendário acadêmico e contatos. O que você gostaria de saber?'
+        };
+
+        function sendMessage(event) {
+            event.preventDefault();
+            
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            // Adicionar mensagem do usuário
+            addMessage(message, 'user');
+            messageInput.value = '';
+            
+            // Mostrar indicador de digitação
+            showTyping();
+            
+            // Simular resposta do bot após delay
+            setTimeout(() => {
+                hideTyping();
+                const response = getBotResponse(message);
+                addMessage(response, 'bot');
+            }, 1500);
+        }
+
+        function sendQuickMessage(message) {
+            addMessage(message, 'user');
+            
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                const response = getBotResponse(message);
+                addMessage(response, 'bot');
+            }, 1200);
+        }
+
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            if (sender === 'bot') {
+                messageDiv.innerHTML = `
+                    <div class="bot-avatar">S</div>
+                    <div class="message-bubble">${text}</div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="message-bubble">${text}</div>
+                `;
+            }
+            
+            // Remover mensagem de boas-vindas se existir
+            const welcomeMessage = chatMessages.querySelector('.welcome-message');
+            if (welcomeMessage) {
+                welcomeMessage.remove();
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function getBotResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.includes('curso') || lowerMessage.includes('graduação')) {
+                return botResponses.cursos;
+            } else if (lowerMessage.includes('matrícula') || lowerMessage.includes('inscrição')) {
+                return botResponses.matrícula;
+            } else if (lowerMessage.includes('calendário') || lowerMessage.includes('semestre')) {
+                return botResponses.calendário;
+            } else if (lowerMessage.includes('contato') || lowerMessage.includes('telefone')) {
+                return botResponses.contato;
+            } else {
+                return botResponses.default;
+            }
+        }
+
+        function showTyping() {
+            typingIndicator.style.display = 'flex';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTyping() {
+            typingIndicator.style.display = 'none';
+        }
+
+        // Focar no input quando a página carregar
+        window.addEventListener('load', () => {
+            messageInput.focus();
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9880bd06e5b362a1',t:'MTc1OTM3MTgxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
