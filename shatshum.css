@@ -1,0 +1,524 @@
+/* ====================================== */
+/* ESTILOS GLOBAIS */
+/* ====================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ====================================== */
+/* PARTÍCULAS FLUTUANTES */
+/* ====================================== */
+
+.floating-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.particle {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    animation: float 6s ease-in-out infinite;
+}
+
+.particle:nth-child(1) { width: 20px; height: 20px; top: 20%; left: 10%; animation-duration: 8s; }
+.particle:nth-child(2) { width: 15px; height: 15px; top: 60%; left: 80%; animation-duration: 6s; animation-delay: 2s; }
+.particle:nth-child(3) { width: 25px; height: 25px; top: 40%; left: 70%; animation-duration: 10s; animation-delay: 4s; }
+.particle:nth-child(4) { width: 12px; height: 12px; top: 80%; left: 20%; animation-duration: 7s; animation-delay: 1s; }
+.particle:nth-child(5) { width: 18px; height: 18px; top: 30%; left: 90%; animation-duration: 9s; animation-delay: 3s; }
+.particle:nth-child(6) { width: 22px; height: 22px; top: 70%; left: 5%; animation-duration: 8s; animation-delay: 5s; }
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+    25% { transform: translateY(-20px) rotate(90deg); opacity: 0.6; }
+    50% { transform: translateY(-40px) rotate(180deg); opacity: 0.8; }
+    75% { transform: translateY(-20px) rotate(270deg); opacity: 0.6; }
+}
+
+/* ====================================== */
+/* CONTAINER DO CHAT */
+/* ====================================== */
+
+.chat-container {
+    width: 90%;
+    max-width: 800px;
+    height: 600px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: slideInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes slideInUp {
+    0% { transform: translateY(100px) scale(0.9); opacity: 0; }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* ====================================== */
+/* CABEÇALHO */
+/* ====================================== */
+
+.chat-header {
+    background: linear-gradient(135deg, #00a86b 0%, #00c851 100%);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.chat-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+}
+
+.chat-header p {
+    margin: 5px 0 0 0;
+    opacity: 0.9;
+    font-size: 0.9rem;
+    position: relative;
+    z-index: 1;
+}
+
+.unb-logo {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #00a86b;
+    font-size: 0.8rem;
+    z-index: 2;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* ====================================== */
+/* ÁREA DE MENSAGENS */
+/* ====================================== */
+
+.chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #f8f9fa;
+}
+
+/* Identificadores de origem das mensagens */
+.message[data-origem="usuario"] {
+    /* Mensagem digitada pelo usuário */
+}
+
+.message[data-origem="ia-shatshum"] {
+    /* Mensagem digitada pela IA do ShatShum */
+}
+
+.message {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: flex-start;
+    animation: messageSlideIn 0.5s ease-out;
+}
+
+@keyframes messageSlideIn {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.message.bot {
+    justify-content: flex-start;
+}
+
+.message.user {
+    justify-content: flex-end;
+}
+
+.message-bubble {
+    max-width: 70%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    transition: transform 0.3s ease;
+}
+
+.message-bubble:hover {
+    transform: translateY(-2px);
+}
+
+/* ====================================== */
+/* TEXTO DIGITADO PELA IA DO SHATSHUM */
+/* ====================================== */
+.message.bot .message-bubble {
+    background: white;
+    color: #333;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Estilo específico para texto da IA */
+.message-bubble[data-tipo="texto-digitado-pela-ia"] {
+    /* Mensagens geradas pela IA usando Cadeias de Markov */
+    position: relative;
+}
+
+.message-bubble[data-tipo="texto-digitado-pela-ia"]::after {
+    content: "🤖 IA";
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #00a86b;
+    color: white;
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.message-bubble[data-tipo="texto-digitado-pela-ia"]:hover::after {
+    opacity: 1;
+}
+
+/* ====================================== */
+/* TEXTO DIGITADO PELO USUÁRIO */
+/* ====================================== */
+.message.user .message-bubble {
+    background: linear-gradient(135deg, #00a86b 0%, #00c851 100%);
+    color: white;
+}
+
+/* Estilo específico para texto do usuário */
+.message-bubble[data-tipo="texto-digitado-pelo-usuario"] {
+    /* Mensagens escritas pelo usuário */
+    position: relative;
+}
+
+.message-bubble[data-tipo="texto-digitado-pelo-usuario"]::after {
+    content: "👤 Você";
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #00a86b;
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.message-bubble[data-tipo="texto-digitado-pelo-usuario"]:hover::after {
+    opacity: 1;
+}
+
+.bot-avatar {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #00a86b 0%, #00c851 100%);
+    border-radius: 50%;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(0, 168, 107, 0.3);
+}
+
+/* ====================================== */
+/* MENSAGEM DE BOAS-VINDAS */
+/* ====================================== */
+
+.welcome-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6c757d;
+}
+
+.welcome-message h3 {
+    color: #00a86b;
+    margin-bottom: 10px;
+}
+
+.quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+.quick-action {
+    background: white;
+    border: 2px solid #00a86b;
+    color: #00a86b;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.quick-action:hover {
+    background: linear-gradient(135deg, #00a86b 0%, #00c851 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 168, 107, 0.3);
+}
+
+/* ====================================== */
+/* INDICADOR DE DIGITAÇÃO */
+/* ====================================== */
+
+.typing-indicator {
+    display: none;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.typing-dots {
+    display: flex;
+    gap: 4px;
+    margin-left: 42px;
+}
+
+.typing-dot {
+    width: 8px;
+    height: 8px;
+    background: #00a86b;
+    border-radius: 50%;
+    animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-10px); opacity: 1; }
+}
+
+/* ====================================== */
+/* FORMULÁRIO DE ENTRADA */
+/* ====================================== */
+
+.chat-input {
+    padding: 20px;
+    background: white;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.input-field {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.input-field:focus {
+    border-color: #00a86b;
+    box-shadow: 0 0 0 3px rgba(0, 168, 107, 0.1);
+}
+
+.send-button {
+    background: linear-gradient(135deg, #00a86b 0%, #00c851 100%);
+    color: white;
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 15px rgba(0, 168, 107, 0.3);
+}
+
+.send-button:hover {
+    transform: scale(1.1) rotate(15deg);
+    box-shadow: 0 8px 25px rgba(0, 168, 107, 0.4);
+}
+
+/* ====================================== */
+/* BOTÕES DE CONTROLE */
+/* ====================================== */
+
+.controls {
+    padding: 10px 20px;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.control-btn {
+    background: white;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    padding: 8px 16px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.control-btn:hover {
+    background: #00a86b;
+    color: white;
+    border-color: #00a86b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 168, 107, 0.2);
+}
+
+/* ====================================== */
+/* MODAL "SOBRE" */
+/* ====================================== */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background: white;
+    margin: 10% auto;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-content h2 {
+    color: #00a86b;
+    margin-bottom: 20px;
+}
+
+.modal-content p {
+    margin: 10px 0;
+    color: #495057;
+}
+
+.modal-content hr {
+    margin: 15px 0;
+    border: none;
+    border-top: 1px solid #e9ecef;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 20px;
+}
+
+.close:hover {
+    color: #00a86b;
+}
+
+/* ====================================== */
+/* RESPONSIVIDADE */
+/* ====================================== */
+
+@media (max-width: 768px) {
+    .chat-container {
+        width: 95%;
+        height: 90vh;
+        margin: 20px 0;
+    }
+
+    .chat-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .message-bubble {
+        max-width: 85%;
+    }
+
+    .quick-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .quick-action {
+        width: 200px;
+        text-align: center;
+    }
+    
+    .controls {
+        flex-wrap: wrap;
+    }
+}
+

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shatshum - O Chat Shumbrega | UnB</title>
+    <link rel="stylesheet" href="shatshum.css">
+</head>
+<body>
+    <!-- Partículas decorativas de fundo -->
+    <div class="floating-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- Container principal do chat -->
+    <div class="chat-container">
+        <!-- Cabeçalho -->
+        <header class="chat-header">
+            <h1>Shatshum</h1>
+            <p>O Chat Shumbrega da UnB</p>
+            <div class="unb-logo">UnB</div>
+        </header>
+
+        <!-- Área de mensagens -->
+        <div class="chat-messages" id="chatMessages">
+            <div class="welcome-message">
+                <h3>🎓 Bem-vindo ao Shatshum!</h3>
+                <p>Olá! Sou o ShatShum - O Shat Shumbrega.<br>
+                O que conversaremos hoje?</p>
+                
+                <div class="quick-actions">
+                    <button class="quick-action" onclick="enviarMensagemRapida('Conte-me sobre a UnB')">Sobre a UnB</button>
+                    <button class="quick-action" onclick="enviarMensagemRapida('Quais cursos existem?')">Cursos</button>
+                    <button class="quick-action" onclick="enviarMensagemRapida('Como me matricular?')">Matrícula</button>
+                    <button class="quick-action" onclick="enviarMensagemRapida('Calendário acadêmico')">Calendário</button>
+                </div>
+            </div>
+
+            <!-- Indicador de digitação -->
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="bot-avatar">S</div>
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulário de entrada -->
+        <form class="chat-input" id="chatForm">
+            <input 
+                type="text" 
+                class="input-field" 
+                id="messageInput" 
+                placeholder="Digite sua mensagem..."
+                autocomplete="off"
+                required
+            >
+            <button type="submit" class="send-button" title="Enviar (ou Ctrl+Enter)">
+                ➤
+            </button>
+        </form>
+
+        <!-- Botões de controle -->
+        <div class="controls">
+            <button class="control-btn" onclick="resetarIA()" title="Resetar IA">
+                🔄 Reset
+            </button>
+            <button class="control-btn" onclick="document.getElementById('fileInput').click()" title="Treinar IA com arquivo">
+                📂 Treinar
+            </button>
+            <button class="control-btn" onclick="toggleSobre()" title="Sobre o projeto">
+                ℹ️ Sobre
+            </button>
+            <input type="file" id="fileInput" accept=".txt" style="display: none;" onchange="treinarComArquivo(event)">
+        </div>
+    </div>
+
+    <!-- Modal "Sobre" -->
+    <div class="modal" id="sobreModal">
+        <div class="modal-content">
+            <span class="close" onclick="toggleSobre()">&times;</span>
+            <h2>📚 Sobre o Shatshum</h2>
+            <p><strong>Desenvolvido por:</strong> [Seu Nome Aqui]</p>
+            <p><strong>Matrícula:</strong> [Sua Matrícula]</p>
+            <p><strong>Curso:</strong> [Seu Curso]</p>
+            <p><strong>Universidade:</strong> Universidade de Brasília (UnB)</p>
+            <hr>
+            <p><strong>Tecnologia:</strong> Cadeias de Markov</p>
+            <p><strong>Descrição:</strong> Chatbot simples que utiliza algoritmo de cadeias de Markov para gerar respostas baseadas em probabilidades de transição entre palavras.</p>
+            <hr>
+            <p><strong>Workshop:</strong> Inteligência Artificial na UnB</p>
+            <p><strong>Data:</strong> 2025</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="shatshum.js"></script>
+    <script>
+        // Inicializar IA ao carregar a página
+        treinar_ia();
+        
+        // Focar no input
+        document.getElementById('messageInput').focus();
+        
+        // Handler do formulário
+        document.getElementById('chatForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            enviarMensagem();
+        });
+        
+        // Suporte para Ctrl+Enter
+        document.getElementById('messageInput').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                enviarMensagem();
+            }
+        });
+    </script>
+</body>
+</html>
+
