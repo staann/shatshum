@@ -3,9 +3,9 @@
 /* ====================================== */
 
 // Variáveis globais
-let markovChain = {};
-let startWords = [];
-let trainingData = [];
+let markovChain = {}; //Um objeto que armazenará a cadeia de Markov. Essencialmente, é um dicionário onde cada palavra é uma chave, e seu valor é uma lista de palavras que podem segui-la
+let startWords = []; //Uma lista (array) que guarda todas as palavras que iniciam uma frase nos dados de treinamento. Isso é usado para começar a gerar uma resposta quando nenhuma palavra da entrada do usuário é encontrada na markovChain
+let trainingData = []; //Uma lista com frases de exemplo que serve como base de conhecimento inicial para o chatbot
 
 /* ====================================== */
 /* FUNÇÃO 1: TREINAR IA */
@@ -47,7 +47,7 @@ function treinar_ia() {
     ];
 
     // Construir cadeia de Markov
-    construirCadeiaMarkov();
+    construirCadeiaMarkov(); //a função construirCadeiaMarkov() para processar essas frases e construir o modelo de probabilidade que será usado para gerar as respostas
     
     console.log("✅ IA treinada com sucesso!");
 }
@@ -56,6 +56,15 @@ function treinar_ia() {
 /* FUNÇÃO 2: PROCESSAR TEXTO E RESPONDER */
 /* ====================================== */
 // Esta função é chamada quando o usuário envia uma mensagem
+/*Esta é a função principal chamada sempre que o usuário envia uma mensagem.
+
+Propósito: Receber o texto do usuário, gerar uma resposta usando a IA e adicionar contexto a ela.
+
+Funcionamento:
+
+Primeiro, ela chama a gerarRespostaMarkov(texto) para criar uma frase com base no modelo treinado.
+
+Depois, passa a resposta gerada e o texto original do usuário para a função adicionarContexto(), que verifica se há palavras-chave (como "curso" ou "matrícula") e adiciona informações extras à resposta, tornando-a mais útil. */
 function processar_texto_e_responder(texto) {
     // Se a IA não foi treinada, retornar mensagem padrão
     if (Object.keys(markovChain).length === 0) {
@@ -72,6 +81,33 @@ function processar_texto_e_responder(texto) {
 /* ====================================== */
 /* FUNÇÕES AUXILIARES - MARKOV */
 /* ====================================== */
+
+/*Esta é a função que efetivamente constrói o modelo da IA.
+
+Propósito: Transformar as frases de treinamento em uma estrutura de dados (a markovChain) que o chatbot possa usar.
+
+Funcionamento:
+
+Ela percorre cada frase no trainingData.
+
+Para cada frase, ela "tokeniza" o texto (usando a função tokenizar), ou seja, transforma a frase em uma lista de palavras individuais, em minúsculas e sem pontuação.
+
+A primeira palavra de cada frase é adicionada à lista startWords.
+
+Ela então itera sobre as palavras da frase, criando pares de "palavra atual" e "próxima palavra". No objeto markovChain, a "palavra atual" se torna uma chave, e a "próxima palavra" é adicionada à lista de valores dessa chave.
+
+Exemplo Prático: Se uma frase de treino for "A UnB é linda", a cadeia de Markov registrará:
+
+startWords terá "a".
+
+markovChain terá:
+
+a: ["unb"]
+
+unb: ["é"]
+
+é: ["linda"] */
+
 
 function construirCadeiaMarkov() {
     markovChain = {};
@@ -102,6 +138,20 @@ function tokenizar(texto) {
         .split(/\s+/)
         .filter(palavra => palavra.length > 0);
 }
+
+/*Propósito: Criar uma nova frase com base na entrada do usuário e na cadeia de Markov.
+
+Funcionamento:
+
+Ela tenta encontrar uma palavra da entrada do usuário que exista como chave na markovChain para iniciar a resposta.
+
+Se nenhuma palavra for encontrada, ela escolhe uma palavra aleatória da lista startWords para começar.
+
+A partir da palavra inicial, ela entra em um loop: seleciona aleatoriamente a próxima palavra da lista de possibilidades na markovChain e a anexa à resposta.
+
+Esse processo se repete até que a resposta atinja o tamanho máximo de 15 palavras ou não haja mais uma próxima palavra possível.
+
+Finalmente, a resposta é formatada pela função formatarResposta() (colocando a primeira letra em maiúscula e adicionando um ponto final) e retornada. */
 
 function gerarRespostaMarkov(entrada) {
     const palavrasEntrada = tokenizar(entrada);
